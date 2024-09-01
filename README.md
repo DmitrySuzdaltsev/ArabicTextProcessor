@@ -16,3 +16,24 @@ Clone the repository and install the required dependencies:
 git clone https://github.com/yourusername/ArabicTextToolkit.git
 cd ArabicTextToolkit
 pip install -r requirements.txt
+
+## Usage
+from ArabicTextHandler import ArabicTextHandler
+
+# Original Arabic text
+input_text = "اللغة العربية جميلة جداً."
+
+# Create an instance of the text handler
+text_handler = ArabicTextHandler()
+
+# Remove diacritical marks
+cleaned_text = text_handler.strip_diacritics(input_text)
+print(f"Text without diacritics: {cleaned_text}")
+
+# Apply diacritical marks
+diacritized_text = text_handler.apply_diacritics(cleaned_text)
+print(f"Diacritized text: {diacritized_text}")
+
+# Phonemize the text
+phonemized_text = text_handler.phonemize_text(input_text)
+print(f"Phonemized text: {phonemized_text}")
