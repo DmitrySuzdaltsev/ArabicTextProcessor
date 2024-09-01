@@ -35,8 +35,8 @@ print(f"Text without diacritics: {cleaned_text}")
 # Apply diacritical marks
 diacritized_text = text_handler.apply_diacritics(cleaned_text)
 print(f"Diacritized text: {diacritized_text}")
-```
 
 # Phonemize the text
 phonemized_text = text_handler.phonemize_text(input_text)
 print(f"Phonemized text: {phonemized_text}")
+```
