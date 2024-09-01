@@ -1,0 +1,84 @@
+import phonemizer
+from shakkala import Shakkala
+from pyarabic.araby import strip_harakat
+from pyarabic.normalize import strip_tashkeel
+
+class ArabicTextHandler:
+    """
+    Class for processing Arabic text, including methods for removing diacritics, diacritization, and phonemization.
+    """
+
+    def __init__(self):
+        # Initialize phonemizer and diacritization model
+        self.phonemizer_backend = phonemizer.backend.EspeakBackend(
+            language='ar', preserve_punctuation=True, with_stress=True
+        )
+        self.diacritization_tool = Shakkala()
+        self.diacritization_model, _ = self.diacritization_tool.get_model()
+        self.diacritized_text_output: str = ""
+        self.phonemized_text_output: str = ""
+
+    def strip_diacritics(self, text: str) -> str:
+        """
+        Removes diacritical marks (harakats) from the text.
+
+        :param text: Arabic text string
+        :return: Text without diacritical marks
+        """
+        # Remove tashkeel (diacritics) and other harakats
+        text = strip_tashkeel(text)
+        return strip_harakat(text)
+
+    def apply_diacritics(self, text: str) -> str:
+        """
+        Adds diacritical marks (harakats) to the text.
+
+        :param text: Arabic text string
+        :return: Diacritized text
+        """
+        # Prepare text for diacritization and predict harakats
+        embeddings = self.diacritization_tool.prepare_input(text)
+        logits = self.diacritization_model.predict(embeddings)[0]
+        predicted_harakat = self.diacritization_tool.logits_to_text(logits)
+        # Get the final text with harakats
+        return self.diacritization_tool.get_final_text(text, predicted_harakat)
+
+    def phonemize_text(self, text: str) -> str:
+        """
+        Phonemizes the text: converts text into a sequence of phonemes.
+
+        :param text: Arabic text string
+        :return: Text represented as phonemes
+        """
+        # Remove diacritical marks and re-apply them
+        text_without_diacritics = self.strip_diacritics(text)
+        self.diacritized_text_output = self.apply_diacritics(text_without_diacritics)
+        # Phonemize the text
+        self.phonemized_text_output = self.phonemizer_backend.phonemize(
+            [self.diacritized_text_output]
+        )[0]
+        # Adjust phonemes to ensure they conform to the IPA (International Phonetic Alphabet) standards for Arabic.
+        self.phonemized_text_output = self.phonemized_text_output.replace("s̪", "sˤ", -1)
+        self.phonemized_text_output = self.phonemized_text_output.replace("t̪", "tˤ", -1)
+        return self.phonemized_text_output
+
+if __name__ == '__main__':
+    # Example usage of the ArabicTextHandler class
+
+    # Original Arabic text
+    input_text = "اللغة العربية جميلة جداً."
+
+    # Create an instance of the text handler
+    text_handler = ArabicTextHandler()
+
+    # Remove diacritical marks
+    cleaned_text = text_handler.strip_diacritics(input_text)
+    print(f"Text without diacritics: {cleaned_text}")
+
+    # Apply diacritical marks
+    diacritized_text = text_handler.apply_diacritics(cleaned_text)
+    print(f"Diacritized text: {diacritized_text}")
+
+    # Phonemize the text
+    phonemized_text = text_handler.phonemize_text(input_text)
+    print(f"Phonemized text: {phonemized_text}")
