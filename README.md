@@ -16,6 +16,7 @@ Clone the repository and install the required dependencies:
 git clone https://github.com/yourusername/ArabicTextToolkit.git
 cd ArabicTextToolkit
 pip install -r requirements.txt
+```
 
 ## Usage
 from ArabicTextHandler import ArabicTextHandler
