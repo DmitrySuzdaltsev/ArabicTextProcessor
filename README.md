@@ -20,7 +20,7 @@ pip install -r requirements.txt
 
 ## Usage
 ```
-from ArabicTextHandler import ArabicTextHandler
+import ArabicTextHandler
 
 # Original Arabic text
 input_text = "اللغة العربية جميلة جداً."
