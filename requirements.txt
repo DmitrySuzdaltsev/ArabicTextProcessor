@@ -1,0 +1,4 @@
+phonemizer==3.2.1
+shakkala==0.1.2
+pyarabic==0.6.0
+torch==2.0.1
